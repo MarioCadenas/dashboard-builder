@@ -4,24 +4,16 @@ import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import 'dotenv/config';
 import cors from 'cors';
 import superjson from 'superjson';
-import { z } from 'zod';
 
-// Import schemas
 import { 
-  createDashboardInputSchema, 
-  updateDashboardInputSchema,
-  createDashboardComponentInputSchema,
-  updateDashboardComponentInputSchema 
+  createUserPreferencesInputSchema,
+  getUserPreferencesInputSchema,
+  updateUserPreferencesInputSchema
 } from './schema';
-
-// Import handlers
-import { createDashboard } from './handlers/create_dashboard';
-import { getDashboards } from './handlers/get_dashboards';
-import { getDashboardById } from './handlers/get_dashboard_by_id';
-import { updateDashboard } from './handlers/update_dashboard';
-import { deleteDashboard } from './handlers/delete_dashboard';
-import { createDashboardComponent } from './handlers/create_dashboard_component';
-import { getDashboardComponents } from './handlers/get_dashboard_components';
+import { createUserPreferences } from './handlers/create_user_preferences';
+import { getUserPreferences } from './handlers/get_user_preferences';
+import { updateUserPreferences } from './handlers/update_user_preferences';
+import { upsertUserTheme } from './handlers/upsert_user_theme';
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -31,39 +23,26 @@ const publicProcedure = t.procedure;
 const router = t.router;
 
 const appRouter = router({
-  // Health check endpoint
   healthcheck: publicProcedure.query(() => {
     return { status: 'ok', timestamp: new Date().toISOString() };
   }),
-
-  // Dashboard management endpoints
-  createDashboard: publicProcedure
-    .input(createDashboardInputSchema)
-    .mutation(({ input }) => createDashboard(input)),
-
-  getDashboards: publicProcedure
-    .query(() => getDashboards()),
-
-  getDashboardById: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .query(({ input }) => getDashboardById(input.id)),
-
-  updateDashboard: publicProcedure
-    .input(updateDashboardInputSchema)
-    .mutation(({ input }) => updateDashboard(input)),
-
-  deleteDashboard: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(({ input }) => deleteDashboard(input.id)),
-
-  // Dashboard component management endpoints
-  createDashboardComponent: publicProcedure
-    .input(createDashboardComponentInputSchema)
-    .mutation(({ input }) => createDashboardComponent(input)),
-
-  getDashboardComponents: publicProcedure
-    .input(z.object({ dashboardId: z.number() }))
-    .query(({ input }) => getDashboardComponents(input.dashboardId)),
+  
+  // Theme management endpoints
+  createUserPreferences: publicProcedure
+    .input(createUserPreferencesInputSchema)
+    .mutation(({ input }) => createUserPreferences(input)),
+    
+  getUserPreferences: publicProcedure
+    .input(getUserPreferencesInputSchema)
+    .query(({ input }) => getUserPreferences(input)),
+    
+  updateUserPreferences: publicProcedure
+    .input(updateUserPreferencesInputSchema)
+    .mutation(({ input }) => updateUserPreferences(input)),
+    
+  upsertUserTheme: publicProcedure
+    .input(updateUserPreferencesInputSchema)
+    .mutation(({ input }) => upsertUserTheme(input)),
 });
 
 export type AppRouter = typeof appRouter;

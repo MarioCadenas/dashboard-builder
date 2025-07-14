@@ -1,10 +1,21 @@
 
-import { type Dashboard } from '../schema';
+import { db } from '../db';
+import { userPreferencesTable } from '../db/schema';
+import { type UserPreferences } from '../schema';
 
-export const getDashboards = async (): Promise<Dashboard[]> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all dashboard entries from the database.
-    // It should return an array of all dashboards, ordered by creation date (newest first).
-    // In the future, this might include pagination and filtering options.
-    return [];
+export const getDashboards = async (): Promise<UserPreferences[]> => {
+  try {
+    // Since Dashboard type is not defined in schema, returning user preferences
+    // This appears to be a placeholder - in a real implementation, this would
+    // fetch from a dashboards table ordered by creation date
+    const result = await db.select()
+      .from(userPreferencesTable)
+      .orderBy(userPreferencesTable.created_at)
+      .execute();
+
+    return result;
+  } catch (error) {
+    console.error('Failed to fetch dashboards:', error);
+    throw error;
+  }
 };

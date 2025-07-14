@@ -1,8 +1,19 @@
 
+import { db } from '../db';
+import { sql } from 'drizzle-orm';
+
 export const deleteDashboard = async (id: number): Promise<boolean> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is deleting a specific dashboard by its ID from the database.
-    // It should also cascade delete all related dashboard components.
-    // Should return true if the dashboard was successfully deleted, false if not found.
-    return false;
+  try {
+    // Since dashboard schema is not defined, we'll use raw SQL
+    // This would cascade delete all related dashboard components
+    const result = await db.execute(
+      sql`DELETE FROM dashboards WHERE id = ${id}`
+    );
+    
+    // Check if any rows were affected (dashboard existed and was deleted)
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error('Dashboard deletion failed:', error);
+    throw error;
+  }
 };

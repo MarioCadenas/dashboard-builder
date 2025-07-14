@@ -4,9 +4,9 @@ import { userPreferencesTable } from '../db/schema';
 import { type UpdateUserPreferencesInput, type UserPreferences } from '../schema';
 import { eq } from 'drizzle-orm';
 
-export const updateDashboard = async (input: UpdateUserPreferencesInput): Promise<UserPreferences | null> => {
+export const updateUserPreferences = async (input: UpdateUserPreferencesInput): Promise<UserPreferences> => {
   try {
-    // Update user preferences (theme for dashboard)
+    // Update existing user preferences
     const result = await db.update(userPreferencesTable)
       .set({
         theme: input.theme,
@@ -16,14 +16,14 @@ export const updateDashboard = async (input: UpdateUserPreferencesInput): Promis
       .returning()
       .execute();
 
-    // Return null if no record was found and updated
+    // If no rows were updated, the user preferences don't exist
     if (result.length === 0) {
-      return null;
+      throw new Error(`User preferences not found for user_id: ${input.user_id}`);
     }
 
     return result[0];
   } catch (error) {
-    console.error('Dashboard preferences update failed:', error);
+    console.error('User preferences update failed:', error);
     throw error;
   }
 };

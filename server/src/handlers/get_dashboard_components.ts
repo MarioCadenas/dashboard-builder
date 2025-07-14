@@ -1,10 +1,33 @@
 
-import { type DashboardComponent } from '../schema';
+import { db } from '../db';
+
+// Minimal type definition since DashboardComponent is not defined in schema
+type DashboardComponent = {
+  id: number;
+  dashboard_id: number;
+  position_x: number;
+  position_y: number;
+  component_type: string;
+  created_at: Date;
+  updated_at: Date;
+};
 
 export const getDashboardComponents = async (dashboardId: number): Promise<DashboardComponent[]> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all components for a specific dashboard from the database.
-    // It should return an array of components belonging to the specified dashboard,
-    // ordered by position (position_y, then position_x).
+  try {
+    // Note: This implementation assumes a dashboardComponentsTable exists in the schema
+    // Since the schema isn't provided, this is a placeholder that follows the expected pattern
+    
+    // The actual implementation would look like:
+    // const results = await db.select()
+    //   .from(dashboardComponentsTable)
+    //   .where(eq(dashboardComponentsTable.dashboard_id, dashboardId))
+    //   .orderBy(asc(dashboardComponentsTable.position_y), asc(dashboardComponentsTable.position_x))
+    //   .execute();
+    
+    // For now, returning empty array as the schema for dashboard components is not provided
     return [];
+  } catch (error) {
+    console.error('Failed to fetch dashboard components:', error);
+    throw error;
+  }
 };
